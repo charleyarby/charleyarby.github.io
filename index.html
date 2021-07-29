@@ -14,6 +14,7 @@
             color: #292929;
             font: 90% Roboto, Arial, sans-serif;
             font-weight: 300;
+            width:1200px;
         }
 
         p {
@@ -53,7 +54,7 @@
         }
 
         div#navigation {
-            background: #7cb71c;
+            background: white;
         }
 
         div#navigation li {
@@ -61,7 +62,7 @@
         }
 
         div#extra {
-            background: #147FA9;
+            background:white;
         }
 
         div#footer {
@@ -92,6 +93,11 @@
             clear: left;
             width: 100%;
         }
+        .line {
+          fill: none;
+          stroke: steelblue;
+          stroke-width: 2px;
+        }
     </style>
 
 </head>
@@ -113,75 +119,88 @@
                 Flexbox). Flexbox Layout is used for small application components, whereas CSS Grid Layout Module is
                 aimed to handle the large scale layouts.
             </p>
-            <svg width=300 height=300>
-              </svg>
+
         </div>
     </div>
     <div id="navigation">
         <p><strong>Historical Events</strong></p>
 
         <ul>
-            <li>World War I</li>
-            <li>Great Depression</li>
-            <li>World War II</li>
-            <li>Dot-com Bubble</li>
-            <li>2008 Depression</li>
+            <button onClick="clickFunction()">World War I</button>
+            <button>Great Depression</button>
+            <button>World War II</button>
+            <button>Dot-com Bubble</button>
+            <button>2008 Depression</button>
         </ul>
     </div>
     <div id="extra">
-        <p><strong>3. Additional Stuff</strong></p>
-        <h3>In this guide you will learn:</h3>
-        <ul>
-            <li>How to use CSS Flexbox to build modern layouts</li>
-            <li>How to align items both vertically and horizontally</li>
-            <li>How to order items within container</li>
-            <li>And more</li>
-        </ul>
-    </div>
-    <div id="footer"><p>Footer</p>
+        <p><strong>Timeline Overview</strong></p>
+        <svg id="overview" width=1000 height=300>
+          </svg>
     </div>
 </div>
 <script type="text/javascript">AddFillerLink("content", "navigation", "extra")</script>
 <body onload='init()'>
 <script>
-async function init() {
 
-var x = d3.scaleLog()
-    .domain([10,150])         // This is what is written on the Axis: from 0 to 100
-    .range([0, 200])       // This is where the axis is placed: from 100 px to
-    .base(10)
+    var parseTime = d3.timeParse("%Y-%m-%d");
+    var margin = {top: 20, right: 20, bottom: 50, left: 70},
+        width = 960 - margin.left - margin.right,
+        height = 200 - margin.top - margin.bottom;
+    var x = d3.scaleTime().range([0, width]);
+    var y = d3.scaleLinear().range([height, 0]);
 
+    function clickFunction() {
+      console.log("button has been clicked")
+    }
+    function init() {
 
-var y = d3.scaleLog()
-    .domain([150,10])         // This is what is written on the Axis: from 0 to 100
-    .range([0, 200])       // This is where the axis is placed: from 100 px to
-    .base(10)
+      // define the line
+      var valueline = d3.line()
+          .x(function(d) { return x(d.date); })
+          .y(function(d) { return y(d.real); });
 
-const data = await d3.csv('https://drive.google.com/file/d/1isM2XPT_oJfgywlmWX0cHjE9N5pN1xgg/view?usp=sharing');
-console.log(data);
-d3.select("svg")
-.attr("width", 300)
-.attr("height",300)
-.append("g")
-.attr("transform","translate(50,50)")
-.selectAll("circle")
-.data(data)
-.enter().append("circle")
-.attr("cx",function(d,i){return x(d.AverageCityMPG);})
-.attr("cy",function(d,i){return y(d.AverageHighwayMPG);})
-.attr("r",function(d,i){return (parseInt(d.EngineCylinders)+2);});
+      // append the svg obgect to the body of the page
+      // appends a 'group' element to 'svg'
+      // moves the 'group' element to the top left margin
+      var svg = d3.select("#overview")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+          .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
 
-d3.select("svg")
-.append("g")
-.attr("transform","translate(50,50)")
-.call(d3.axisLeft(y).tickValues([10,20,50,100]).tickFormat(d3.format("~s")));
+      // Get the data
+      d3.csv("https://raw.githubusercontent.com/charleyarby/charleyarby.github.io/main/DJIA_Monthly_Data.csv")
+      .then(function(data) {
 
-d3.select("svg").append("g")
-.attr("transform","translate(50,250)")
-.call(d3.axisBottom(x).tickValues([10,20,50,100]).tickFormat(d3.format("~s")));
+        // format the data
+        data.forEach(function(d) {
+            d.date = parseTime(d.date);
+            d.real = +d.real;
+        });
+      console.log(data)
+        // Scale the range of the data
+        x.domain(d3.extent(data, function(d) { return d.date; }));
+        y.domain([0, d3.max(data, function(d) { return d.real; })]);
 
-}
+        // Add the valueline path.
+        svg.append("path")
+            .data([data])
+            .attr("class", "line")
+            .attr("d", valueline);
+
+        // Add the x Axis
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
+
+        // Add the y Axis
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
+      });
+    }
 </script>
-
 </body>
 </html>
