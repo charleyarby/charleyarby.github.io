@@ -1,19 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
+<script src='https://d3js.org/d3.v5.min.js'></script>
 <head>
-    <title>FlexBox Template-2 columns liquid, fixed side and 1 large , left menu</title>
+    <title>Dow Jones Historical Data</title>
     <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
-    <meta name="description" content="Use this HTML basic website two columns liquid, fixed side and one large  layout template where the extra stuff is large, and the navigation menu is narrow on the left side and the main content is wide on the right side.">
-    <meta name="generator" content="HAPedit 3.1">
-    <link rel="canonical" href="https://www.w3docs.com/snippets/html/layout_templates/31.html" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="HTML FlexBox Template - Two columns liquid, fixed side and one large , left menu" />
-    <meta property="og:description" content="Use this HTML basic website two columns liquid, fixed side and one large  layout template where the extra stuff is large, and the navigation menu is narrow on the left side and the main content is wide on the right side." />
-    <meta property="og:image" content="https://www.w3docs.com/build/images/logo-amp.png" />
-    <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:width" content="192" />
-    <meta property="og:image:height" content="192" />
-    <meta property="og:image:alt" content="W3dcos" />
     <style type="text/css">
         html, body {
             margin: 0;
@@ -108,8 +98,7 @@
 <body>
 <div id="container">
     <div id="header">
-        <h1>Header</h1>
-        <a href="/download/template/31" target="_blank">download this layout</a>
+        <h1>Dow Jones Historical Index 1915-2021</h1>
     </div>
     <div id="wrapper">
         <div id="content">
@@ -124,31 +113,19 @@
                 Flexbox). Flexbox Layout is used for small application components, whereas CSS Grid Layout Module is
                 aimed to handle the large scale layouts.
             </p>
-            <h3>The Two axes of Flexbox</h3>
-            <p>When working with flexbox you need to think in terms of two axes — the main axis and the cross axis. The
-                main axis is defined by the flex-direction property, and the cross axis runs perpendicular to it.
-                Everything we do with flexbox refers back to these axes, so it is worth understanding how they work from
-                the outset.
-            </p>
+            <svg width=300 height=300>
+              </svg>
         </div>
     </div>
     <div id="navigation">
-        <p><strong>2. Navigation Menu</strong></p>
-        <h3>Styling Flex Container</h3>
+        <p><strong>Historical Events</strong></p>
+
         <ul>
-            <li>flex-direction</li>
-            <li>flex-wrap</li>
-            <li>justify-content</li>
-            <li>align-content</li>
-            <li>align-items</li>
-        </ul>
-        <h3>Designing Flex Items </h3>
-        <ul>
-            <li>order</li>
-            <li>align-self</li>
-            <li>flex-grow</li>
-            <li>flex-shrink</li>
-            <li>flex-basis</li>
+            <li>World War I</li>
+            <li>Great Depression</li>
+            <li>World War II</li>
+            <li>Dot-com Bubble</li>
+            <li>2008 Depression</li>
         </ul>
     </div>
     <div id="extra">
@@ -165,5 +142,46 @@
     </div>
 </div>
 <script type="text/javascript">AddFillerLink("content", "navigation", "extra")</script>
+<body onload='init()'>
+<script>
+async function init() {
+
+var x = d3.scaleLog()
+    .domain([10,150])         // This is what is written on the Axis: from 0 to 100
+    .range([0, 200])       // This is where the axis is placed: from 100 px to
+    .base(10)
+
+
+var y = d3.scaleLog()
+    .domain([150,10])         // This is what is written on the Axis: from 0 to 100
+    .range([0, 200])       // This is where the axis is placed: from 100 px to
+    .base(10)
+
+const data = await d3.csv('https://drive.google.com/file/d/1isM2XPT_oJfgywlmWX0cHjE9N5pN1xgg/view?usp=sharing');
+console.log(data);
+d3.select("svg")
+.attr("width", 300)
+.attr("height",300)
+.append("g")
+.attr("transform","translate(50,50)")
+.selectAll("circle")
+.data(data)
+.enter().append("circle")
+.attr("cx",function(d,i){return x(d.AverageCityMPG);})
+.attr("cy",function(d,i){return y(d.AverageHighwayMPG);})
+.attr("r",function(d,i){return (parseInt(d.EngineCylinders)+2);});
+
+d3.select("svg")
+.append("g")
+.attr("transform","translate(50,50)")
+.call(d3.axisLeft(y).tickValues([10,20,50,100]).tickFormat(d3.format("~s")));
+
+d3.select("svg").append("g")
+.attr("transform","translate(50,250)")
+.call(d3.axisBottom(x).tickValues([10,20,50,100]).tickFormat(d3.format("~s")));
+
+}
+</script>
+
 </body>
 </html>
