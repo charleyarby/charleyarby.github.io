@@ -93,11 +93,11 @@
             clear: left;
             width: 100%;
         }
-        .line {
+        /* .line {
           fill: none;
           stroke: steelblue;
           stroke-width: 2px;
-        }
+        } */
     </style>
 
 </head>
@@ -126,8 +126,8 @@
         <p><strong>Historical Events</strong></p>
 
         <ul>
-            <button onClick="clickFunction()">World War I</button>
-            <button>Great Depression</button>
+            <button onClick="init(1)">World War I</button>
+            <button onClick="init(2)">Great Depression</button>
             <button>World War II</button>
             <button>Dot-com Bubble</button>
             <button>2008 Depression</button>
@@ -149,46 +149,96 @@
         height = 200 - margin.top - margin.bottom;
     var x = d3.scaleTime().range([0, width]);
     var y = d3.scaleLinear().range([height, 0]);
+    var svg = d3.select("#overview")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
-    function clickFunction() {
-      console.log("button has been clicked")
-    }
-    function init() {
+
+
+    function init(selection) {
 
       // define the line
       var valueline = d3.line()
           .x(function(d) { return x(d.date); })
           .y(function(d) { return y(d.real); });
 
-      // append the svg obgect to the body of the page
-      // appends a 'group' element to 'svg'
-      // moves the 'group' element to the top left margin
-      var svg = d3.select("#overview")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-          .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
-
       // Get the data
       d3.csv("https://raw.githubusercontent.com/charleyarby/charleyarby.github.io/main/DJIA_Monthly_Data.csv")
       .then(function(data) {
 
-        // format the data
+      //  format the data
         data.forEach(function(d) {
             d.date = parseTime(d.date);
             d.real = +d.real;
         });
+        // for(var i=0; i<100; i++) {
+        //   //console.log(data[i].date)
+        //   data[i].date = parseTime(data[i].date);
+        //   console.log(data[i])
+        //   data[i]["real"] = data[i]["real"];
+        // }
       console.log(data)
         // Scale the range of the data
         x.domain(d3.extent(data, function(d) { return d.date; }));
         y.domain([0, d3.max(data, function(d) { return d.real; })]);
 
+        var ww1_start = JSON.stringify(parseTime("1915-01-01"));
+        var ww1_end = JSON.stringify(parseTime("1918-11-01"));
+        var gd_start = JSON.stringify(parseTime("1929-08-01"));
+        var gd_end = JSON.stringify(parseTime("1933-03-01"));
+        var copy = false;
+        var endcopy = false;
+        var data_selected = [];
+        var start,end;
+        if(selection==1) {
+          start = ww1_start;
+          end = ww1_end;
+        } else if (selection==2) {
+          start = gd_start;
+          end = gd_end;
+        }
+
+        for(var i=0; i<data.length; i++) {
+            var cur = JSON.stringify(data[i].date)
+            if(cur==start) {
+              copy = true;
+              console.log("true")
+            }
+            if(cur==end)
+              endcopy = true;
+
+            if(copy)
+              data_selected.push(data[i])
+
+            if(endcopy==true)
+              break;
+        }
+        console.log(data_selected)
+
+        if(selection) {
+          svg.append("path")
+            .data([data_selected])
+            .attr("class", "line")
+            .attr("d", valueline)
+            .attr("fill", "none")
+            .attr("stroke", "red")
+            .attr("opacity",1)
+            .attr("stroke-width", "5px");
+
+        }
         // Add the valueline path.
         svg.append("path")
             .data([data])
             .attr("class", "line")
-            .attr("d", valueline);
+            .attr("d", valueline)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("opacity",0.25)
+            .attr("stroke-width", "2px");
+
+
 
         // Add the x Axis
         svg.append("g")
