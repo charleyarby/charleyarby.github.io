@@ -108,18 +108,7 @@
     </div>
     <div id="wrapper">
         <div id="content">
-            <p><strong>1. Main Content</strong></p>
-            <h3>The Ultimate Guide to Flexbox </h3>
-            <p>The Flex Layout module is new layout module in CSS3 made to improve the items align, directions and order
-                in the container even when they are with dynamic or even unknown size. The prime characteristic of the
-                flex container is the ability to modify the width or height of its children to fill the available space
-                in the best possible way on different screen sizes.
-            </p>
-            <p>Flexbox is relatively new, but it enjoys excellent browser support today (nearly 83% of browsers support
-                Flexbox). Flexbox Layout is used for small application components, whereas CSS Grid Layout Module is
-                aimed to handle the large scale layouts.
-            </p>
-
+          <svg id="main_svg" width=700 height=400></svg>
         </div>
     </div>
     <div id="navigation">
@@ -128,9 +117,9 @@
         <ul>
             <button onClick="init(1)">World War I</button>
             <button onClick="init(2)">Great Depression</button>
-            <button>World War II</button>
-            <button>Dot-com Bubble</button>
-            <button>2008 Depression</button>
+            <button onClick="init(3)">World War II</button>
+            <button onClick="init(4)">Dot-com Bubble</button>
+            <button onClick="init(5)">2008 Recession</button>
         </ul>
     </div>
     <div id="extra">
@@ -139,7 +128,6 @@
           </svg>
     </div>
 </div>
-<script type="text/javascript">AddFillerLink("content", "navigation", "extra")</script>
 <body onload='init()'>
 <script>
 
@@ -156,13 +144,75 @@
         .attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
 
+    var margin_main = {top: 20, right: 20, bottom: 50, left: 70},
+        width_main = 700 - margin.left - margin.right,
+        height_main = 400 - margin.top - margin.bottom;
+    var x_main = d3.scaleTime().range([0, width_main]);
+    var y_main = d3.scaleLinear().range([height_main, 0]);
+    var svg_main = d3.select("#main_svg")
+            .attr("width", width_main + margin_main.left + margin_main.right)
+            .attr("height", height_main + margin_main.top + margin_main.bottom)
+            .append("g")
+            .attr("transform","translate(" + margin_main.left + "," + margin_main.top + ")");
+
+
+    var ww1_start = JSON.stringify(parseTime("1915-01-01"));
+    var ww1_end = JSON.stringify(parseTime("1918-11-01"));
+    var gd_start = JSON.stringify(parseTime("1929-08-01"));
+    var gd_end = JSON.stringify(parseTime("1933-03-01"));
+    var ww2_start = JSON.stringify(parseTime("1939-09-01"));
+    var ww2_end = JSON.stringify(parseTime("1945-09-01"));
+    var dotcom_start = JSON.stringify(parseTime("1995-01-01"));
+    var dotcom_end = JSON.stringify(parseTime("2001-01-01"));
+    var recession2008_start = JSON.stringify(parseTime("2007-12-01"));
+    var recession2008_end = JSON.stringify(parseTime("2009-06-01"));
+    var data_selected = [];
+
+    function main_view(data_zoom) {
+      d3.select("#main_svg_ID").remove();
+      d3.select("#main_bottom_axis").remove();
+      d3.select("#main_left_axis").remove();
+      console.log("main");
+      var valueline_main = d3.line()
+          .x(function(d) { return x_main(d.date); })
+          .y(function(d) { return y_main(d.real); });
+
+      x_main.domain(d3.extent(data_zoom, function(d) { return d.date; }));
+      y_main.domain([0, d3.max(data_zoom, function(d) { return d.real; })]);
+      //
+      console.log(data_zoom)
+
+      svg_main.append("path")
+        .data([data_zoom])
+        .attr("class", "line")
+        .attr("d", valueline_main)
+        .attr("fill", "none")
+        .attr("stroke", "red")
+        .attr("opacity",1)
+        .attr("stroke-width", "5px")
+        .attr("id", "main_svg_ID");
+
+      // Add the x Axis
+      svg_main.append("g")
+          .attr("transform", "translate(0," + height_main + ")")
+          .attr("id", "main_bottom_axis")
+          .call(d3.axisBottom(x_main));
+
+      // Add the y Axis
+      svg_main.append("g")
+          .attr("id", "main_left_axis")
+          .call(d3.axisLeft(y_main));
+    }
 
     function init(selection) {
-
+      d3.select("#overview_svg_ID").remove();
+      d3.select("#overview_svg_selected_ID").remove();
       // define the line
       var valueline = d3.line()
           .x(function(d) { return x(d.date); })
           .y(function(d) { return y(d.real); });
+
+      data_selected = [];
 
       // Get the data
       d3.csv("https://raw.githubusercontent.com/charleyarby/charleyarby.github.io/main/DJIA_Monthly_Data.csv")
@@ -173,31 +223,32 @@
             d.date = parseTime(d.date);
             d.real = +d.real;
         });
-        // for(var i=0; i<100; i++) {
-        //   //console.log(data[i].date)
-        //   data[i].date = parseTime(data[i].date);
-        //   console.log(data[i])
-        //   data[i]["real"] = data[i]["real"];
-        // }
-      console.log(data)
+
+
         // Scale the range of the data
         x.domain(d3.extent(data, function(d) { return d.date; }));
         y.domain([0, d3.max(data, function(d) { return d.real; })]);
 
-        var ww1_start = JSON.stringify(parseTime("1915-01-01"));
-        var ww1_end = JSON.stringify(parseTime("1918-11-01"));
-        var gd_start = JSON.stringify(parseTime("1929-08-01"));
-        var gd_end = JSON.stringify(parseTime("1933-03-01"));
+
         var copy = false;
         var endcopy = false;
-        var data_selected = [];
         var start,end;
+
         if(selection==1) {
           start = ww1_start;
           end = ww1_end;
         } else if (selection==2) {
           start = gd_start;
           end = gd_end;
+        } else if (selection==3) {
+          start = ww2_start;
+          end = ww2_end;
+        } else if (selection==4) {
+          start = dotcom_start;
+          end = dotcom_end;
+        } else if (selection==5) {
+          start = recession2008_start;
+          end = recession2008_end;
         }
 
         for(var i=0; i<data.length; i++) {
@@ -211,11 +262,10 @@
 
             if(copy)
               data_selected.push(data[i])
-
             if(endcopy==true)
               break;
         }
-        console.log(data_selected)
+
 
         if(selection) {
           svg.append("path")
@@ -225,8 +275,8 @@
             .attr("fill", "none")
             .attr("stroke", "red")
             .attr("opacity",1)
-            .attr("stroke-width", "5px");
-
+            .attr("stroke-width", "5px")
+            .attr("id", "overview_svg_selected_ID");
         }
         // Add the valueline path.
         svg.append("path")
@@ -236,9 +286,8 @@
             .attr("fill", "none")
             .attr("stroke", "steelblue")
             .attr("opacity",0.25)
-            .attr("stroke-width", "2px");
-
-
+            .attr("stroke-width", "2px")
+            .attr("id", "overview_svg_ID");
 
         // Add the x Axis
         svg.append("g")
@@ -249,6 +298,8 @@
         svg.append("g")
             .call(d3.axisLeft(y));
 
+
+        main_view(data_selected);
       });
     }
 </script>
