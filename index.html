@@ -98,6 +98,18 @@
         #description{
           width:300px
         }
+        div.tooltip {
+          position: absolute;
+          text-align: center;
+          width: 140px;
+          height: 50px;
+          padding: 2px;
+          font: 12px sans-serif;
+          background: lightgreen;
+          border: 0px;
+          border-radius: 8px;
+          pointer-events: none;
+        }
 
     </style>
 
@@ -116,11 +128,11 @@
         <H2><strong>Historical Events</strong></H2>
 
         <ul>
-            <button onClick="init(1)">World War I</button>
-            <button onClick="init(2)">Great Depression</button>
-            <button onClick="init(3)">World War II</button>
-            <button onClick="init(4)">Dot-com Bubble</button>
-            <button onClick="init(5)">2008 Recession</button>
+            <button id="btn_1" onClick="init(1)">World War I</button>
+            <button id="btn_2" onClick="init(2)">Great Depression</button>
+            <button id="btn_3" onClick="init(3)">World War II</button>
+            <button id="btn_4" onClick="init(4)">Dot-com Bubble</button>
+            <button id="btn_5" onClick="init(5)">2008 Recession</button>
         </ul>
         <H2>Description</H2>
           <p id="description">Replace Me Text</p>
@@ -134,6 +146,9 @@
 <body onload='init()'>
 <script>
 
+    var div = d3.select("body").append("div")
+                .attr("class", "tooltip")
+                .style("opacity",0);
     var parseTime = d3.timeParse("%Y-%m-%d");
     var margin = {top: 20, right: 20, bottom: 50, left: 70},
         width = 960 - margin.left - margin.right,
@@ -167,10 +182,15 @@
     var ww2_end = JSON.stringify(parseTime("1945-09-01"));
     var dotcom_start = JSON.stringify(parseTime("1995-01-01"));
     var dotcom_end = JSON.stringify(parseTime("2003-01-01"));
-    var recession2008_start = JSON.stringify(parseTime("2006-12-01"));
+    var recession2008_start = JSON.stringify(parseTime("2007-1-01"));
     var recession2008_end = JSON.stringify(parseTime("2010-06-01"));
     var data_selected = [];
 
+    var recession2008Points = ["2007-10-01","2008-02-01", "2008-03-01", "2008-09-01", "2009-01-01", "2009-03-01", "2009-06-01" ]
+    var recessionTooltips = ["US stock market hit all time high", "George W. Bush sign Economic Stimulus Act of 2008",
+  "Bear Sterns collapses and purchased by JPMorgan Chase",  "US Treasury take over management of Freddie Mac",
+  "Lehman Brothers declares bankruptcy. $619 billion in debts", "US government bailed out Bank of America",
+  "Dow drop more than 50% from all time high"];
     function change_description(selection) {
       if(selection==1)
         document.getElementById("description").innerHTML = "This is WW1"
@@ -185,12 +205,12 @@
         "known as The Great Recession, was caused by subprime mortage crisis."+
         "These mortages are home lones granted to those who have poor credit histories."+
         "In addition to subprime mortages, as millions of new homes flooded the market,"+
-        "the housing market started to decline and many homeowners and ortage lenders"+
-        "were in trouble because the value of their homes were less than their total loam amount."
-
+        "the housing market started to decline and many homeowners and mortage lenders"+
+        "were in trouble because the value of their homes were less than their total loam amount."+
+        "Thus, homeowners couldn't repay their loans, and mortage lenders went bankrupt, leading to recession."
     }
 
-    function main_view(data_zoom) {
+    function main_view(data_zoom, selection) {
       d3.select("#main_svg_ID").remove();
       d3.select("#main_bottom_axis").remove();
       d3.select("#main_left_axis").remove();
@@ -200,9 +220,7 @@
           .y(function(d) { return y_main(d.real); });
 
       x_main.domain(d3.extent(data_zoom, function(d) { return d.date; }));
-      y_main.domain([0, d3.max(data_zoom, function(d) { return d.real; })]);
-      //
-      console.log(data_zoom)
+      y_main.domain([d3.min(data_zoom, function(d) { return d.real; })-500, d3.max(data_zoom, function(d) { return d.real; })]);
 
       svg_main.append("path")
         .data([data_zoom])
@@ -224,6 +242,56 @@
       svg_main.append("g")
           .attr("id", "main_left_axis")
           .call(d3.axisLeft(y_main));
+
+      if(selection==5) {
+        var points = recession2008Points;
+        var pointsPosition = [];
+        for(var i=0; i<points.length; i++) {
+          points[i] = JSON.stringify(parseTime(points[i]));
+          for(var j=0; j<data_zoom.length; j++) {
+            var cur = JSON.stringify(data_zoom[j].date)
+            if(points[i]==cur) {
+              pointsPosition.push(data_zoom[j]);
+            }
+          }
+        }
+      //  console.log(pointsPosition + "this is position")
+      //  for(var a=0; a<pointsPosition.length; a++) {
+          svg_main.selectAll("circle")
+            .data(pointsPosition).enter().append("circle")
+            .attr("cx", function(d){return x_main(d.date);})
+            .attr("cy", function(d){return y_main(d.real);})
+            .attr("fill", "lime")
+            .attr("r",7)
+            .on("mouseover", function(d,i){
+              d3.select(this).transition()
+                .duration("50")
+                .attr("opacity", "0.5")
+                .attr("fill", "blue")
+                .attr("r", "13");
+
+                div.html(recessionTooltips[i])
+                  .transition()
+                  .duration(50)
+                  .style("opacity",1)
+                  .style("left", (d3.event.pageX+10) + "px")
+                  .style("top", (d3.event.pageY-15) + "px");
+            })
+            .on("mouseout", function (d, j) {
+              d3.select(this).transition()
+                .duration('50')
+                .attr('opacity', '1')
+                .attr("fill", "lime")
+                .attr("r","7");
+
+                div.transition()
+                    .duration(50)
+                    .style("opacity",0);
+            });
+
+        //}
+        }
+
     }
 
     function init(selection) {
@@ -321,7 +389,7 @@
             .call(d3.axisLeft(y));
 
 
-        main_view(data_selected);
+        main_view(data_selected, selection);
         change_description(selection);
       });
     }
