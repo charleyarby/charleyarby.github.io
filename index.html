@@ -27,9 +27,19 @@
             line-height: 1.6;
         }
 
+        ul {
+          margin-top:2px;
+          margin-bottom:2px;
+        }
+
         h3 {
             padding: 5px 20px;
             margin: 0;
+        }
+
+        h2 {
+          margin-top:0;
+          margin-bottom:0;
         }
 
         div#header {
@@ -37,8 +47,8 @@
         }
 
         div#header h1 {
-            height: 80px;
-            line-height: 80px;
+            height: 50px;
+            line-height: 50px;
             margin: 0;
             padding-left: 10px;
             background: #e0e0e0;
@@ -96,7 +106,9 @@
         }
 
         #description{
-          width:300px
+          width:300px;
+          margin-top:0;
+          margin-bottom:0;
         }
         div.tooltip {
           position: absolute;
@@ -117,7 +129,7 @@
 <body>
 <div id="container">
     <div id="header">
-        <h1>Dow Jones Historical Index 1915-2021</h1>
+        <h1>Dow Jones Historical Index 1915-2021 Adjusted for Inflation</h1>
     </div>
     <div id="wrapper">
         <div id="content">
@@ -151,7 +163,7 @@
                 .style("opacity",0);
     var parseTime = d3.timeParse("%Y-%m-%d");
     var margin = {top: 20, right: 20, bottom: 50, left: 70},
-        width = 960 - margin.left - margin.right,
+        width = 1000 - margin.left - margin.right,
         height = 200 - margin.top - margin.bottom;
     var x = d3.scaleTime().range([0, width]);
     var y = d3.scaleLinear().range([height, 0]);
@@ -164,7 +176,7 @@
 
     var margin_main = {top: 20, right: 20, bottom: 50, left: 70},
         width_main = 700 - margin.left - margin.right,
-        height_main = 600 - margin.top - margin.bottom;
+        height_main = 500 - margin.top - margin.bottom;
     var x_main = d3.scaleTime().range([0, width_main]);
     var y_main = d3.scaleLinear().range([height_main, 0]);
     var svg_main = d3.select("#main_svg")
@@ -176,8 +188,8 @@
 
     var ww1_start = JSON.stringify(parseTime("1915-01-01"));
     var ww1_end = JSON.stringify(parseTime("1921-11-01"));
-    var gd_start = JSON.stringify(parseTime("1929-08-01"));
-    var gd_end = JSON.stringify(parseTime("1933-03-01"));
+    var gd_start = JSON.stringify(parseTime("1929-01-01"));
+    var gd_end = JSON.stringify(parseTime("1934-07-01"));
     var ww2_start = JSON.stringify(parseTime("1939-09-01"));
     var ww2_end = JSON.stringify(parseTime("1945-09-01"));
     var dotcom_start = JSON.stringify(parseTime("1995-01-01"));
@@ -186,32 +198,44 @@
     var recession2008_end = JSON.stringify(parseTime("2010-06-01"));
     var data_selected = [];
 
-    var recession2008Points = ["2007-10-01","2008-02-01", "2008-03-01", "2008-09-01", "2009-01-01", "2009-03-01", "2009-06-01" ]
-    var recessionTooltips = ["US stock market hit all time high", "George W. Bush sign Economic Stimulus Act of 2008",
-  "Bear Sterns collapses and purchased by JPMorgan Chase",  "US Treasury take over management of Freddie Mac",
-  "Lehman Brothers declares bankruptcy. $619 billion in debts", "US government bailed out Bank of America",
-  "Dow drop more than 50% from all time high"];
+    var greatDepressionPoints = ["1929-03-01","1929-08-01", "1929-10-01", "1930-06-01", "1931-02-01", "1932-01-01",
+      "1933-03-01","1934-06-01"];
+    var greatDepressionTooltips = ["1929-03-04<br>Herbert Hoover become 31st President of US",
+    "1929-09-03<br>Stock market reached its peak", "1929-10-24<br>Stock market begins to crash.",
+    "1930-06-17<br>Smoot-Hawley Tariff Act passed", "1931-02-01<br>Food riot begin to breakout in US",
+    "1932<br>Unemployment rose to 23.6%. Over 10,000 banks have failed since 1929.",
+    "1933-03-04<br>FDR's First One Hundred Days begins.", "1934-06-06<br>SEC establed to regulate stock market."];
+
+    var recession2008Points = ["2007-10-01","2008-02-01", "2008-03-01", "2008-09-01", "2009-01-01", "2009-03-01" ];
+    var recessionTooltips = ["2007-10-09<br>US stock market hit all time high", "2008-02-13<br>George W. Bush sign Economic Stimulus Act of 2008",
+  "2008-03-16<br>Bear Sterns collapses and purchased by JPMorgan Chase",
+  "2008-09-15<br>Lehman Brothers declares bankruptcy. $619 billion in debts", "2009-01-16<br>US government bailed out Bank of America",
+  "2009-03-09<br>Dow drop more than 50% from all time high"];
     function change_description(selection) {
       if(selection==1)
         document.getElementById("description").innerHTML = "This is WW1"
       if(selection==2)
-        document.getElementById("description").innerHTML = "This is Great Depression"
+        document.getElementById("description").innerHTML = "The Great Depression was the worst economic recession in the history of the US," +
+        " which lasted from 1929 to 1939. As the stock market crashed in October 1929, investors lost millions of dollars, " +
+        " unemployment rose to a all time high, banks went bankrupt, and people were rioting for basic living essentials such as food." +
+        " It would be until WWII, that the unemployment rate dropped below pre-Depression level."
       if(selection==3)
         document.getElementById("description").innerHTML = "This is WW2"
       if(selection==4)
         document.getElementById("description").innerHTML = "This is Great Dot-com bubble"
       if(selection==5)
         document.getElementById("description").innerHTML = "The main cause of the 2008 Recession, also"+
-        "known as The Great Recession, was caused by subprime mortage crisis."+
-        "These mortages are home lones granted to those who have poor credit histories."+
-        "In addition to subprime mortages, as millions of new homes flooded the market,"+
-        "the housing market started to decline and many homeowners and mortage lenders"+
-        "were in trouble because the value of their homes were less than their total loam amount."+
-        "Thus, homeowners couldn't repay their loans, and mortage lenders went bankrupt, leading to recession."
+        " known as The Great Recession, was caused by subprime mortage crisis."+
+        " These mortages are home lones granted to those who have poor credit histories."+
+      //  "In addition to subprime mortages, as millions of new homes flooded the market,"+
+        " As millions of new homes flooded the market, the housing market started to decline and many homeowners and mortage lenders"+
+        " were in trouble because the value of their homes were less than their total loam amount."+
+        " Thus, homeowners couldn't repay their loans, and mortage lenders went bankrupt, leading to recession."
     }
 
     function main_view(data_zoom, selection) {
       d3.select("#main_svg_ID").remove();
+      d3.selectAll("#main_circle_ID").remove();
       d3.select("#main_bottom_axis").remove();
       d3.select("#main_left_axis").remove();
       console.log("main");
@@ -221,7 +245,6 @@
 
       x_main.domain(d3.extent(data_zoom, function(d) { return d.date; }));
       y_main.domain([d3.min(data_zoom, function(d) { return d.real; })-500, d3.max(data_zoom, function(d) { return d.real; })]);
-
       svg_main.append("path")
         .data([data_zoom])
         .attr("class", "line")
@@ -242,27 +265,40 @@
       svg_main.append("g")
           .attr("id", "main_left_axis")
           .call(d3.axisLeft(y_main));
+      var points,curTooltips;
+      if(selection==2) {
+        points=greatDepressionPoints;
+        curTooltips=greatDepressionTooltips
+      }
 
       if(selection==5) {
-        var points = recession2008Points;
+        points = recession2008Points;
+        curTooltips = recessionTooltips;
+      }
+
+    //  if(selection==5) {
+
+        var pointsNew = [];
         var pointsPosition = [];
         for(var i=0; i<points.length; i++) {
-          points[i] = JSON.stringify(parseTime(points[i]));
+          pointsNew.push(JSON.stringify(parseTime(points[i])));
           for(var j=0; j<data_zoom.length; j++) {
             var cur = JSON.stringify(data_zoom[j].date)
-            if(points[i]==cur) {
+            if(pointsNew[i]==cur) {
               pointsPosition.push(data_zoom[j]);
             }
           }
         }
       //  console.log(pointsPosition + "this is position")
       //  for(var a=0; a<pointsPosition.length; a++) {
+      console.log(pointsPosition)
           svg_main.selectAll("circle")
             .data(pointsPosition).enter().append("circle")
             .attr("cx", function(d){return x_main(d.date);})
             .attr("cy", function(d){return y_main(d.real);})
             .attr("fill", "lime")
             .attr("r",7)
+            .attr("id", "main_circle_ID")
             .on("mouseover", function(d,i){
               d3.select(this).transition()
                 .duration("50")
@@ -270,7 +306,7 @@
                 .attr("fill", "blue")
                 .attr("r", "13");
 
-                div.html(recessionTooltips[i])
+                div.html(curTooltips[i])
                   .transition()
                   .duration(50)
                   .style("opacity",1)
@@ -290,7 +326,7 @@
             });
 
         //}
-        }
+        //}
 
     }
 
