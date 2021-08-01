@@ -129,7 +129,7 @@
           height: 50px;
           padding: 2px;
           font: 12px sans-serif;
-          background: lightgreen;
+          background: LightCyan;
           border: 0px;
           border-radius: 8px;
           pointer-events: none;
@@ -216,13 +216,13 @@
     var greatDepressionTooltips = ["1929-03-04<br>Herbert Hoover become 31st President of US",
     "1929-09-03<br>Stock market reached its peak", "1929-10-24<br>Stock market begins to crash.",
     "1930-06-17<br>Smoot-Hawley Tariff Act passed", "1931-02-01<br>Food riot begin to breakout in US",
-    "1932<br>Unemployment rose to 23.6%. Over 10,000 banks have failed since 1929.",
+    "1932<br>Unemployment rose to 23.6%. Over 10,000 banks failed since 1929.",
     "1933-03-04<br>FDR's First One Hundred Days begins.", "1934-06-06<br>SEC establed to regulate stock market."];
 
     var WW2Points = ["1939-09-01","1941-12-01", "1942-06-01", "1943-09-01", "1944-06-01", "1945-05-01", "1945-09-01"]
     var WW2Tooltips= ["1939-09-01<br>Germany invades Poland. Start of WWII", "1941-12-07<br>Japan attacks Pearl Harbor. US joins WWII the next day.",
-    "1942-06-04<br>Battle of Midway", "1943-09-08<br>Italy surrenders to Allies,", "1944-06-01<br>D-Day. Allied forces land on Normandy, France",
-    "1945-05-08<br>V-E Day. Germany surrenders to Allies.", "1945-09-02<br>V-J Day. Japan surrenders to Allies."];
+    "1942-06-04<br>Battle of Midway. The market reacted favorably to the Battle of Midway. ", "1943-09-08<br>Italy surrenders to Allies.", "1944-06-01<br>D-Day. Allied forces land on Normandy, France",
+    "1945-05-08<br>V-E Day. Market continues to climb as victory nears.", "1945-09-02<br>V-J Day. Japan surrenders to Allies."];
 
 
     var recession2008Points = ["2007-10-01","2008-02-01", "2008-03-01", "2008-09-01", "2009-01-01", "2009-03-01" ];
@@ -236,7 +236,11 @@
         document.getElementById("pic").innerHTML = "<img id='pic_ID' src = 'https://raw.githubusercontent.com/charleyarby/charleyarby.github.io/main/GreatDepression.jpg'>";
       if(selection==3)
         document.getElementById("pic").innerHTML = "<img id='pic_ID' src = 'https://raw.githubusercontent.com/charleyarby/charleyarby.github.io/main/WW2Pic.jpg'>";
+      if(selection==5)
+        document.getElementById("pic").innerHTML = "<img id='pic_ID' src = 'https://raw.githubusercontent.com/charleyarby/charleyarby.github.io/main/2008recession.jpg'>";
+
     }
+
 
     function changeButton(selection) {
 
@@ -265,14 +269,16 @@
         " unemployment rose to a all time high, banks went bankrupt, and people were rioting for basic living essentials such as food." +
         " It would be until WWII, that the unemployment rate dropped below pre-Depression level."
       if(selection==3)
-        document.getElementById("description").innerHTML = "This is WW2"
+        document.getElementById("description").innerHTML = "The instability of countries Europe after WWI lead directly to WWII. As Hitler " +
+        " rise to power in Germeny, Germany signed treaties with Italy and Japan to further their plan of world domination. " +
+        " Soon after Hitler invades Poland in September of 1939, Great Britain and France declare war on germany, making the start of WWII. " +
+        " Over the next 6 years, more lives would be lost globally than any other war in the history. "
   //    if(selection==4)
     //    document.getElementById("description").innerHTML = "This is Great Dot-com bubble"
       if(selection==5)
         document.getElementById("description").innerHTML = "The main cause of the 2008 Recession, also"+
         " known as The Great Recession, was caused by subprime mortage crisis."+
         " These mortages are home lones granted to those who have poor credit histories."+
-      //  "In addition to subprime mortages, as millions of new homes flooded the market,"+
         " As millions of new homes flooded the market, the housing market started to decline and many homeowners and mortage lenders"+
         " were in trouble because the value of their homes were less than their total loam amount."+
         " Thus, homeowners couldn't repay their loans, and mortage lenders went bankrupt, leading to recession."
