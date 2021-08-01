@@ -120,15 +120,28 @@
           top:50px;
           width:300px;
           height:700px;
-          opacity:75%;
+          opacity:50%;
+        }
+
+        #annotation_ID {
+          position:absolute;
+          left:700px;
+          top:100px;
+          width:200px;
+          height:50px;
+          opacity:100%;
+          font-size:16px;
+          background: LightCyan;
+          border-radius: 8px;
+          padding: 5px;
         }
         div.tooltip {
           position: absolute;
           text-align: center;
           width: 140px;
-          height: 50px;
+          height: 80px;
           padding: 2px;
-          font: 12px sans-serif;
+          font: 14px sans-serif;
           background: LightCyan;
           border: 0px;
           border-radius: 8px;
@@ -141,6 +154,7 @@
 <body>
 <div id="container">
     <div id='pic'></div>
+    <div id='annot'></div>
     <div id="header">
         <h1>Dow Jones Historical Index 1915-2021 Adjusted for Inflation</h1>
     </div>
@@ -239,6 +253,8 @@
       if(selection==5)
         document.getElementById("pic").innerHTML = "<img id='pic_ID' src = 'https://raw.githubusercontent.com/charleyarby/charleyarby.github.io/main/2008recession.jpg'>";
 
+        document.getElementById("annot").innerHTML = "<div id='annotation_ID'> Hover over each green point for additional details.</div>";
+
     }
 
 
@@ -269,9 +285,9 @@
         " unemployment rose to a all time high, banks went bankrupt, and people were rioting for basic living essentials such as food." +
         " It would be until WWII, that the unemployment rate dropped below pre-Depression level."
       if(selection==3)
-        document.getElementById("description").innerHTML = "The instability of countries Europe after WWI lead directly to WWII. As Hitler " +
-        " rise to power in Germeny, Germany signed treaties with Italy and Japan to further their plan of world domination. " +
-        " Soon after Hitler invades Poland in September of 1939, Great Britain and France declare war on germany, making the start of WWII. " +
+        document.getElementById("description").innerHTML = "The instability of countries in Europe after WWI lead directly to WWII. As Hitler " +
+        " rose to power in Germeny, Germany signed treaties with Italy and Japan to further their plan of world domination. " +
+        " Soon after Hitler invaded Poland in September of 1939, Great Britain and France declared war on germany, making the start of WWII. " +
         " Over the next 6 years, more lives would be lost globally than any other war in the history. "
   //    if(selection==4)
     //    document.getElementById("description").innerHTML = "This is Great Dot-com bubble"
@@ -343,45 +359,39 @@
             }
           }
         }
-      //  console.log(pointsPosition + "this is position")
-      //  for(var a=0; a<pointsPosition.length; a++) {
-      console.log(pointsPosition)
-          svg_main.selectAll("circle")
-            .data(pointsPosition).enter().append("circle")
-            .attr("cx", function(d){return x_main(d.date);})
-            .attr("cy", function(d){return y_main(d.real);})
-            .attr("fill", "lime")
-            .attr("r",7)
-            .attr("id", "main_circle_ID")
-            .on("mouseover", function(d,i){
-              d3.select(this).transition()
-                .duration("50")
-                .attr("opacity", "0.5")
-                .attr("fill", "blue")
-                .attr("r", "13");
 
-                div.html(curTooltips[i])
-                  .transition()
+        svg_main.selectAll("circle")
+          .data(pointsPosition).enter().append("circle")
+          .attr("cx", function(d){return x_main(d.date);})
+          .attr("cy", function(d){return y_main(d.real);})
+          .attr("fill", "lime")
+          .attr("r",7)
+          .attr("id", "main_circle_ID")
+          .on("mouseover", function(d,i){
+            d3.select(this).transition()
+              .duration("50")
+              .attr("opacity", "0.5")
+              .attr("fill", "blue")
+              .attr("r", "13");
+
+              div.html(curTooltips[i])
+                .transition()
+                .duration(50)
+                .style("opacity",1)
+                .style("left", (d3.event.pageX+10) + "px")
+                .style("top", (d3.event.pageY-15) + "px");
+          })
+          .on("mouseout", function (d, j) {
+            d3.select(this).transition()
+              .duration('50')
+              .attr('opacity', '1')
+              .attr("fill", "lime")
+              .attr("r","7");
+
+              div.transition()
                   .duration(50)
-                  .style("opacity",1)
-                  .style("left", (d3.event.pageX+10) + "px")
-                  .style("top", (d3.event.pageY-15) + "px");
-            })
-            .on("mouseout", function (d, j) {
-              d3.select(this).transition()
-                .duration('50')
-                .attr('opacity', '1')
-                .attr("fill", "lime")
-                .attr("r","7");
-
-                div.transition()
-                    .duration(50)
-                    .style("opacity",0);
-            });
-
-        //}
-        //}
-
+                  .style("opacity",0);
+          });
     }
 
     function init(selection) {
