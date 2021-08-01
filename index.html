@@ -190,7 +190,7 @@
     var ww1_end = JSON.stringify(parseTime("1921-11-01"));
     var gd_start = JSON.stringify(parseTime("1929-01-01"));
     var gd_end = JSON.stringify(parseTime("1934-07-01"));
-    var ww2_start = JSON.stringify(parseTime("1939-09-01"));
+    var ww2_start = JSON.stringify(parseTime("1939-07-01"));
     var ww2_end = JSON.stringify(parseTime("1945-09-01"));
     var dotcom_start = JSON.stringify(parseTime("1995-01-01"));
     var dotcom_end = JSON.stringify(parseTime("2003-01-01"));
@@ -205,6 +205,12 @@
     "1930-06-17<br>Smoot-Hawley Tariff Act passed", "1931-02-01<br>Food riot begin to breakout in US",
     "1932<br>Unemployment rose to 23.6%. Over 10,000 banks have failed since 1929.",
     "1933-03-04<br>FDR's First One Hundred Days begins.", "1934-06-06<br>SEC establed to regulate stock market."];
+
+    var WW2Points = ["1939-09-01","1941-12-01", "1942-06-01", "1943-09-01", "1944-06-01", "1945-05-01", "1945-09-01"]
+    var WW2Tooltips= ["1939-09-01<br>Germany invades Poland. Start of WWII", "1941-12-07<br>Japan attacks Pearl Harbor. US joins WWII the next day.",
+    "1942-06-04<br>Battle of Midway", "1943-09-08<br>Italy surrenders to Allies,", "1944-06-01<br>D-Day. Allied forces land on Normandy, France",
+    "1945-05-08<br>V-E Day. Germany surrenders to Allies.", "1945-09-02<br>V-J Day. Japan surrenders to Allies."];
+
 
     var recession2008Points = ["2007-10-01","2008-02-01", "2008-03-01", "2008-09-01", "2009-01-01", "2009-03-01" ];
     var recessionTooltips = ["2007-10-09<br>US stock market hit all time high", "2008-02-13<br>George W. Bush sign Economic Stimulus Act of 2008",
@@ -270,7 +276,10 @@
         points=greatDepressionPoints;
         curTooltips=greatDepressionTooltips
       }
-
+      if(selection==3) {
+        points=WW2Points;
+        curTooltips=WW2Tooltips;
+      }
       if(selection==5) {
         points = recession2008Points;
         curTooltips = recessionTooltips;
