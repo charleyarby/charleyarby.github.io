@@ -140,10 +140,10 @@
         <H2><strong>Historical Events</strong></H2>
 
         <ul>
-            <button id="btn_1" onClick="init(1)">World War I</button>
+            <!--<button id="btn_1" onClick="init(1)">World War I</button> -->
             <button id="btn_2" onClick="init(2)">Great Depression</button>
             <button id="btn_3" onClick="init(3)">World War II</button>
-            <button id="btn_4" onClick="init(4)">Dot-com Bubble</button>
+            <!--<button id="btn_4" onClick="init(4)">Dot-com Bubble</button> -->
             <button id="btn_5" onClick="init(5)">2008 Recession</button>
         </ul>
         <H2>Description</H2>
@@ -218,8 +218,8 @@
   "2008-09-15<br>Lehman Brothers declares bankruptcy. $619 billion in debts", "2009-01-16<br>US government bailed out Bank of America",
   "2009-03-09<br>Dow drop more than 50% from all time high"];
     function change_description(selection) {
-      if(selection==1)
-        document.getElementById("description").innerHTML = "This is WW1"
+    //  if(selection==1)
+      //  document.getElementById("description").innerHTML = "This is WW1"
       if(selection==2)
         document.getElementById("description").innerHTML = "The Great Depression was the worst economic recession in the history of the US," +
         " which lasted from 1929 to 1939. As the stock market crashed in October 1929, investors lost millions of dollars, " +
@@ -227,8 +227,8 @@
         " It would be until WWII, that the unemployment rate dropped below pre-Depression level."
       if(selection==3)
         document.getElementById("description").innerHTML = "This is WW2"
-      if(selection==4)
-        document.getElementById("description").innerHTML = "This is Great Dot-com bubble"
+  //    if(selection==4)
+    //    document.getElementById("description").innerHTML = "This is Great Dot-com bubble"
       if(selection==5)
         document.getElementById("description").innerHTML = "The main cause of the 2008 Recession, also"+
         " known as The Great Recession, was caused by subprime mortage crisis."+
