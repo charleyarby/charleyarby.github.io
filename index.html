@@ -17,7 +17,7 @@
             color: #292929;
             font: 90% Roboto, Arial, sans-serif;
             font-weight: 300;
-            width:1200px;
+            width:1300px;
         }
 
         p {
@@ -113,6 +113,14 @@
           margin-top:0;
           margin-bottom:0;
         }
+
+        #pic_ID {
+          position:absolute;
+          left:1000px;
+          top:50px;
+          width:300px;
+          height:700px;
+        }
         div.tooltip {
           position: absolute;
           text-align: center;
@@ -131,6 +139,7 @@
 </head>
 <body>
 <div id="container">
+    <div id='pic'></div>
     <div id="header">
         <h1>Dow Jones Historical Index 1915-2021 Adjusted for Inflation</h1>
     </div>
@@ -222,7 +231,7 @@
   "2009-03-09<br>Dow drop more than 50% from all time high"];
 
     function addPicture(selection) {
-      //var pic = document.getElementById("content").innerHTML("<img src = >");
+      var pic = document.getElementById("pic").innerHTML = "<img id='pic_ID' src = 'https://raw.githubusercontent.com/charleyarby/charleyarby.github.io/main/WW2Pic.jpg'>";
     }
 
     function changeButton(selection) {
@@ -463,6 +472,7 @@
         main_view(data_selected, selection);
         change_description(selection);
         changeButton(selection);
+        addPicture(selection);
       });
     }
 </script>
